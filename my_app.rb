@@ -29,22 +29,18 @@ post '/strategies' do
   return_message = {}
     jdata = JSON.parse(params[:data],:symbolize_names => true)
     error(400, "Bad Request") unless jdata.has_key?(:name) && jdata.has_key?(:cid) && jdata.has_key?(:options)
-    if jdata.has_key?(:name)
-      strategies = $redis.lrange("strategies", 0, -1)
-      exists = false
-      strategies.each do |s|
-        found = true if s == jdata[:name]
-      end
-      $redis.lpush("strategies", jdata[:name]) if !found
-      key_prefix = "strategies:#{jdata[:name]}"
-      $redis.set("#{key_prefix}:cid", jdata[:cid])
-      $redis.lpush("cids:#{jdata[:cid]}:strategies", jdata[:name])
-      $redis.set("#{key_prefix}:options", jdata[:options].join(','))
-      return_message[:status] = jdata[:options]
-    else
-      return_message[:status] = 'sorry'
+    strategies = $redis.lrange("strategies", 0, -1)
+    strategy_name = jdata[:name].strip()
+    exists = false
+    strategies.each do |s|
+      found = true if s == strategy_name
     end
-    return_message.to_json
+    $redis.lpush("strategies", strategy_name) if !found
+    key_prefix = "strategies:#{strategy_name}"
+    $redis.set("#{key_prefix}:cid", jdata[:cid])
+    $redis.lpush("cids:#{jdata[:cid]}:strategies", strategy_name)
+    $redis.set("#{key_prefix}:options", jdata[:options].join(','))
+    return_message[:status] = "OK"
 end
 
 get '/decision' do
