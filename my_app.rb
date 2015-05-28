@@ -1,8 +1,10 @@
 require 'sinatra'
 require 'json'
+require 'sinatra/cross_origin'
 
 configure do
     require 'redis'
+    enable :cross_origin
     uri = URI.parse(ENV["REDISCLOUD_URL"])
     $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
 end
@@ -29,6 +31,10 @@ post '/strategies' do
   return_message = {}
     jdata = JSON.parse(params[:data],:symbolize_names => true)
     error(400, "Bad Request") unless jdata.has_key?(:name) && jdata.has_key?(:cid) && jdata.has_key?(:options)
+    url_pattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+    jdata[:options].each do |u|
+      error(400, "All options must be valid URLs") if !url_pattern.match(u)
+    end
     strategies = $redis.lrange("strategies", 0, -1)
     strategy_name = jdata[:name].strip()
     exists = false
