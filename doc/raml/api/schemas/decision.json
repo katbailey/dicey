@@ -10,9 +10,10 @@
         "url" : {
           "description": "The URL of the option that was chosen in this play",
           "type": "string",
-          "pattern": "^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
+          "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
         }
       }
     }
+  },
   "required": [ "outcome" ]
 }
