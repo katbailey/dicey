@@ -1,0 +1,17 @@
+{
+  "title": "Decision Payload",
+  "type": "object",
+  "properties": {
+    "cid": {
+      "description": "Container ID.",
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,128}$"
+    },
+    "pid": {
+      "type": "string",
+      "description": "The unique hash for the user we're making a decision for so we can identify this user later",
+      "pattern": "^[a-zA-Z0-9]{1,255}$"
+    }
+  },
+  "required": [ "cid", "pid" ]
+}

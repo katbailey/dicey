@@ -1,0 +1,37 @@
+displayName: Strategies
+type: collection
+description: | 
+  A collection of Strategies.
+get:
+  description: Get a list of strategies
+  responses:
+    200:
+      body:
+        schema: strategies
+post:
+  description: Add a strategy
+  body:
+    application/json:
+      schema: strategy_payload
+  responses:
+    # 201 means created
+    201:
+      body:
+        schema: strategy
+
+#---------------------------------------------------------------
+# Nested resource representing a  single strategy - name parameter as part of the path.
+#---------------------------------------------------------------
+/{strategyId}:
+  uriParameters:
+    strategyId:
+      description: "The identifier of the strategy"
+  type: member
+  get:
+    responses:
+      200:
+        body:
+          schema: strategy
+  delete:
+    description: |
+      This method will *delete* an **individual strategy**

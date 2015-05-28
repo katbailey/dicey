@@ -1,0 +1,17 @@
+displayName: Decision
+description: an endpoint to make a decision for an unique user.
+get:
+  description: Get a decision about content to show
+  queryParameters:
+    cid:
+      description: "The container identifier for which we need to make a decision"
+      type: "string"
+      required: true
+    pid:
+      description: "The unique hash of the user for whom we are making a decision for so we can identify this user later"
+      type: "string"
+      required: true
+  responses:
+    200:
+      body:
+        schema: decision

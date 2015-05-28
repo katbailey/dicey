@@ -1,0 +1,18 @@
+{
+  "title": "Decision",
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "url" : {
+          "description": "The URL of the option that was chosen in this play",
+          "type": "string",
+          "pattern": "^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
+        }
+      }
+    }
+  "required": [ "outcome" ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "Strategy",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Campaign UID.",
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,128}$"
+    },
+    "title": {
+      "type": "string"
+    },
+	"cid": {
+		"type": "string",
+		"description": "The ID of the container that this decision strategy applies to"
+	},
+    "options": {
+      "description": "The item URLs that can be chosen by this strategy.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+	"num_items": {
+		"description": "The number of items to be chosen by this strategy for display"
+	}
+  },
+  "required": [ "id", "cid", "items", "num_items" ]
+}

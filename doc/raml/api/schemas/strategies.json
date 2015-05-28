@@ -1,0 +1,7 @@
+{
+  "title": "Strategies",
+  "type": "array",
+  "items": {
+    "$ref": "strategies.json"
+  }
+}

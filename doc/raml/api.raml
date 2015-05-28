@@ -1,0 +1,37 @@
+#%RAML 0.8
+#===============================================================
+#  Products API - RAML example
+#  References:
+#    - RAML Specification - http://raml.org/spec.html
+#    - RAML Projects - http://raml.org/projects.html
+#    - RAML Tools  - http://www.apihub.com/raml-tools
+#    - Githux example - http://api-portal.anypoint.mulesoft.com/github/api/github-api-v3/github-api-v3.raml
+#===============================================================
+
+title: DecisionAPI
+version: v1
+baseUri: https://immense-caverns-1406.herokuapp.com
+
+mediaType:  application/json
+
+#List of protocols to support for baseUri
+
+protocols: [ HTTP, HTTPS ]
+
+resourceTypes:
+  - collection: !include ./resourceTypes/collection.yaml
+  - member: !include ./resourceTypes/member.yaml
+
+
+schemas:
+  - strategy: !include ./api/schemas/strategy.json
+  - strategy_payload: !include ./api/schemas/strategy_payload.json  
+  - strategies: !include ./api/schemas/strategies.json
+
+  - decision: !include ./api/schemas/decision.json
+  - decision_payload: !include ./api/schemas/decision_payload.json
+
+
+/strategies: !include api/strategies.yaml
+
+/decision: !include api/decision.yaml
