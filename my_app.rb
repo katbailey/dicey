@@ -33,9 +33,9 @@ post '/strategies' do
     strategy_name = jdata[:name].strip()
     exists = false
     strategies.each do |s|
-      found = true if s == strategy_name
+      exists = true if s == strategy_name
     end
-    $redis.lpush("strategies", strategy_name) if !found
+    $redis.lpush("strategies", strategy_name) if !exists
     key_prefix = "strategies:#{strategy_name}"
     $redis.set("#{key_prefix}:cid", jdata[:cid])
     $redis.lpush("cids:#{jdata[:cid]}:strategies", strategy_name)
