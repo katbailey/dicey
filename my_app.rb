@@ -66,8 +66,11 @@ get '/decision' do
   items = $redis.get("strategies:#{my_strategies[0]}:options")
   error(404, "No such container") if items.nil?
   items_array = items.split(',')
+  resp = Hash.new()
+  resp[:cid] = params[:cid]
   choice = rand(items_array.length)
   choices = []
   choices.push(items_array[choice].strip())
-  choices.to_json
+  resp[:outcome] = choices
+  resp.to_json
 end

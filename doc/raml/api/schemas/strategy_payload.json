@@ -26,8 +26,9 @@
       "uniqueItems": true
     },
 	"num_items": {
-		"description": "The number of items to be chosen by this strategy for display"
+		"description": "The number of items to be chosen by this strategy for display. Optional, defaults to 1.",
+		"type": "integer"
 	}
   },
-  "required": [ "id", "cid", "items", "num_items" ]
+  "required": [ "id", "cid", "items"]
 }
