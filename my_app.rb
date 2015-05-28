@@ -43,6 +43,19 @@ post '/strategies' do
     return_message[:status] = "OK"
 end
 
+get '/strategies/:name' do
+  strategy_name = params['name'].strip()
+  key_prefix = "strategies:#{strategy_name}"
+  strategy_cid = $redis.get("#{key_prefix}:cid")
+  strategy_options = $redis.get("#{key_prefix}:options")
+  error(404, "Strategy info not found") if strategy_cid.nil? || strategy_options.nil?
+  resp = Hash.new()
+  resp[:name] = strategy_name
+  resp[:cid] = strategy_cid
+  resp[:options] = strategy_options.split(',')
+  resp.to_json
+end
+
 get '/decision' do
   error(400, "Bad Request") unless params[:cid] && params[:pid]
   my_strategies = []
