@@ -30,7 +30,12 @@ post '/strategies' do
     jdata = JSON.parse(params[:data],:symbolize_names => true)
     error(400, "Bad Request") unless jdata.has_key?(:name) && jdata.has_key?(:cid) && jdata.has_key?(:options)
     if jdata.has_key?(:name)
-      $redis.lpush("strategies", jdata[:name])
+      strategies = $redis.lrange("strategies", 0, -1)
+      exists = false
+      strategies.each do |s|
+        found = true if s == jdata[:name]
+      end
+      $redis.lpush("strategies", jdata[:name]) if !found
       key_prefix = "strategies:#{jdata[:name]}"
       $redis.set("#{key_prefix}:cid", jdata[:cid])
       $redis.lpush("cids:#{jdata[:cid]}:strategies", jdata[:name])
