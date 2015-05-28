@@ -20,7 +20,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$"
+        "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
       },
       "minItems": 1,
       "uniqueItems": true
