@@ -89,12 +89,14 @@ get '/decision' do
   error(400, "Bad Request") unless params[:cid] && params[:pid]
   my_strategies = []
   strategies = $redis.lrange("cids:#{params[:cid]}:strategies", 0, -1)
+  halt 204 if strategies.nil?
   strategies.each do |s|
     my_strategies.push(s)
   end
   key_prefix = "strategies:#{my_strategies[0]}"
   num_options = $redis.get("#{key_prefix}:numoptions")
-  error(404, "No such container") if num_options.nil?
+  halt 204 if num_options.nil?
+
   choice = rand(num_options.to_i)
   option_key_prefix = "#{key_prefix}:option:#{choice}"
   chosen_item = Hash.new()
