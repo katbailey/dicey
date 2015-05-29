@@ -57,7 +57,8 @@ post '/strategies' do
       $redis.set("#{option_key_prefix}:url", jdata[:options][i][:url])
       $redis.set("#{option_key_prefix}:thumbnailurl", jdata[:options][i][:thumbnail_url])
     end
-    return_message[:status] = "OK"
+    status 201
+    "OK"
 end
 
 get '/strategies/:name' do
