@@ -33,7 +33,9 @@ post '/strategies' do
     error(400, "Bad Request") unless jdata.has_key?(:name) && jdata.has_key?(:cid) && jdata.has_key?(:options)
     url_pattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
     jdata[:options].each do |u|
-      error(400, "All options must be valid URLs") if !url_pattern.match(u)
+      if (!u[:type] || !u[:url] || !u[:thumbnail_url] || !url_pattern.match(u[:url]) || !url_pattern.match(u[:thumbnail_url]))
+        error(400, "All options must have valid URLs")
+      end
     end
     strategies = $redis.lrange("strategies", 0, -1)
     strategy_name = jdata[:name].strip()
@@ -41,11 +43,17 @@ post '/strategies' do
     strategies.each do |s|
       exists = true if s == strategy_name
     end
-    $redis.lpush("strategies", strategy_name) if !exists
+    $redis.lpush("strategies", strategy_name) unless exists
     key_prefix = "strategies:#{strategy_name}"
     $redis.set("#{key_prefix}:cid", jdata[:cid])
     $redis.lpush("cids:#{jdata[:cid]}:strategies", strategy_name)
-    $redis.set("#{key_prefix}:options", jdata[:options].join(','))
+    $redis.set("#{key_prefix}:numoptions", jdata[:options].length)
+    jdata[:options].each_index do |i|
+      option_key_prefix = "#{key_prefix}:option:#{i}"
+      $redis.set("#{option_key_prefix}:type", jdata[:options][i][:type])
+      $redis.set("#{option_key_prefix}:url", jdata[:options][i][:url])
+      $redis.set("#{option_key_prefix}:thumbnailurl", jdata[:options][i][:thumbnail_url])
+    end
     return_message[:status] = "OK"
 end
 
@@ -53,12 +61,24 @@ get '/strategies/:name' do
   strategy_name = params['name'].strip()
   key_prefix = "strategies:#{strategy_name}"
   strategy_cid = $redis.get("#{key_prefix}:cid")
-  strategy_options = $redis.get("#{key_prefix}:options")
+  i = 0
+  num_options = $redis.get("#{key_prefix}:numoptions").to_i
+  strategy_options = []
+  while i < num_options do
+    option_key_prefix = "#{key_prefix}:option:#{i}"
+    option = Hash.new()
+    option[:type] = $redis.get("#{option_key_prefix}:type")
+    option[:url] = $redis.get("#{option_key_prefix}:url")
+    option[:thumbnail_url] = $redis.get("#{option_key_prefix}:thumbnailurl")
+    strategy_options.push(option)
+    i += 1
+  end
+
   error(404, "Strategy info not found") if strategy_cid.nil? || strategy_options.nil?
   resp = Hash.new()
   resp[:name] = strategy_name
   resp[:cid] = strategy_cid
-  resp[:options] = strategy_options.split(',')
+  resp[:options] = strategy_options
   resp.to_json
 end
 
@@ -69,14 +89,21 @@ get '/decision' do
   strategies.each do |s|
     my_strategies.push(s)
   end
-  items = $redis.get("strategies:#{my_strategies[0]}:options")
-  error(404, "No such container") if items.nil?
-  items_array = items.split(',')
+  key_prefix = "strategies:#{my_strategies[0]}"
+  num_options = $redis.get("#{key_prefix}:numoptions")
+  error(404, "No such container") if num_options.nil?
+  choice = rand(num_options.to_i)
+  option_key_prefix = "#{key_prefix}:option:#{choice}"
+  chosen_item = Hash.new()
+  chosen_item[:type] = $redis.get("#{option_key_prefix}:type")
+  chosen_item[:url] = $redis.get("#{option_key_prefix}:url")
+  chosen_item[:thumbnail_url] = $redis.get("#{option_key_prefix}:thumbnailurl")
+
   resp = Hash.new()
   resp[:cid] = params[:cid]
-  choice = rand(items_array.length)
+  
   choices = []
-  choices.push(items_array[choice].strip())
+  choices.push(chosen_item)
   resp[:outcome] = choices
   resp.to_json
 end
