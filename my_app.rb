@@ -23,8 +23,11 @@ get '/strategies' do
 end
 
 delete '/strategies' do
-  $redis.del("strategies")
-  "deleted all strategies"
+  keys = $redis.keys("*")
+  keys.each do |k|
+    $redis.del(k)
+  end
+  "deleted everything"
 end
 
 post '/strategies' do
