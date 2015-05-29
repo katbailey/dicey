@@ -4,31 +4,48 @@
   "properties": {
     "name": {
       "description": "Strategy ID.",
-      "type": "string",
-      "pattern": "^[a-z0-9_]{1,128}$"
+      "pattern": "^[a-z0-9_]{1,128}$",
+      "type": "string"
+    },
+    "cid": {
+      "description": "The ID of the container that this decision strategy applies to",
+      "pattern": "^[a-z0-9_]{1,128}$",
+      "type": "string"
+    },
+    "num_options": {
+      "description": "The number of items to be chosen by this strategy for display. Optional, defaults to 1.",
+      "type": "integer"
+    },
+    "options": {
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true,
+      "description": "The item URLs that can be chosen by this strategy.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "thumbnail_url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          },
+          "type": {
+              "pattern": "^[a-z0-9_]{1,128}$",
+              "type": "string"
+          },
+          "url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          }
+        }
+      }
     },
     "title": {
       "type": "string"
-    },
-	"cid": {
-		"type": "string",
-		"description": "The ID of the container that this decision strategy applies to",
-		"pattern": "^[a-z0-9_]{1,128}$"
-	},
-    "options": {
-      "description": "The item URLs that can be chosen by this strategy.",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
-      },
-      "minItems": 1,
-      "uniqueItems": true
-    },
-	"num_items": {
-		"description": "The number of items to be chosen by this strategy for display. Optional, defaults to 1.",
-		"type": "integer"
-	}
+    }
   },
-  "required": [ "id", "cid", "items"]
+  "required": [
+    "id",
+    "cid",
+    "options"
+  ]
 }

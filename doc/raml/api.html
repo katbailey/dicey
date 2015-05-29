@@ -152,33 +152,52 @@
   "properties": {
     "name": {
       "description": "Strategy ID.",
-      "type": "string",
-      "pattern": "^[a-z0-9_]{1,128}$"
+      "pattern": "^[a-z0-9_]{1,128}$",
+      "type": "string"
+    },
+    "cid": {
+      "description": "The ID of the container that this decision strategy applies to",
+      "pattern": "^[a-z0-9_]{1,128}$",
+      "type": "string"
+    },
+    "num_options": {
+      "description": "The number of items to be chosen by this strategy for display. Optional, defaults to 1.",
+      "type": "integer"
+    },
+    "options": {
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true,
+      "description": "The item URLs that can be chosen by this strategy.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "thumbnail_url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          },
+          "type": {
+              "pattern": "^[a-z0-9_]{1,128}$",
+              "type": "string"
+          },
+          "url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          }
+        }
+      }
     },
     "title": {
       "type": "string"
-    },
-	"cid": {
-		"type": "string",
-		"description": "The ID of the container that this decision strategy applies to",
-		"pattern": "^[a-z0-9_]{1,128}$"
-	},
-    "options": {
-      "description": "The item URLs that can be chosen by this strategy.",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
-      },
-      "minItems": 1,
-      "uniqueItems": true
-    },
-	"num_items": {
-		"description": "The number of items to be chosen by this strategy for display"
-	}
+    }
   },
-  "required": [ "id", "cid", "items", "num_items" ]
-}</code></pre></div><div class="tab-pane" id="strategies_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "required": [
+    "id",
+    "cid",
+    "options"
+  ]
+}
+</code></pre></div><div class="tab-pane" id="strategies_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
   "title": "Strategy",
   "type": "object",
   "properties": {
@@ -244,18 +263,36 @@
   "title": "Decision",
   "type": "object",
   "properties": {
+    "cid": {
+      "description": "The container ID",
+      "type": "string"
+    },
     "outcome": {
-      "type": "array",
       "minItems": 1,
+      "type": "array",
+      "description": "An array of chosen options for display. The number of items in the outcome will depend on the num_options property of the strategy in question.",
       "uniqueItems": true,
       "items": {
-        "url" : {
-          "description": "The URL of the option that was chosen in this play",
-          "type": "string",
-          "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
+        "type": "object",
+        "properties": {
+          "thumbnail_url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          },
+          "type": {
+            "pattern": "^[a-z0-9_]{1,128}$",
+            "type": "string"
+          },
+          "url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          }
         }
       }
     }
   },
-  "required": [ "outcome" ]
-}</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#strategies">Strategies</a></li><li><a href="#decision">Decision</a></li></ul></div></div></div></div></body></html>
+  "required": [
+      "outcome"
+  ]
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#strategies">Strategies</a></li><li><a href="#decision">Decision</a></li></ul></div></div></div></div></body></html>

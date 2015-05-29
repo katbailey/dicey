@@ -2,22 +2,35 @@
   "title": "Decision",
   "type": "object",
   "properties": {
-	"cid": {
-	  "type": "string",
-	  "description": "The container ID"
-	},
+    "cid": {
+      "description": "The container ID",
+      "type": "string"
+    },
     "outcome": {
-      "type": "array",
       "minItems": 1,
+      "type": "array",
+      "description": "An array of chosen options for display. The number of items in the outcome will depend on the num_options property of the strategy in question.",
       "uniqueItems": true,
       "items": {
-        "url" : {
-          "description": "The URL of the option that was chosen in this play",
-          "type": "string",
-          "pattern": "^(https?:\/\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\/\\w \\.-]*)*\/?$"
+        "type": "object",
+        "properties": {
+          "thumbnail_url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          },
+          "type": {
+            "pattern": "^[a-z0-9_]{1,128}$",
+            "type": "string"
+          },
+          "url": {
+            "pattern": "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([/\\w \\.-]*)*/?$",
+            "type": "string"
+          }
         }
       }
     }
   },
-  "required": [ "outcome" ]
+  "required": [
+      "outcome"
+  ]
 }
