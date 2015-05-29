@@ -77,7 +77,7 @@ get '/strategies/:name' do
     i += 1
   end
 
-  error(404, "Strategy info not found") if strategy_cid.nil? || strategy_options.length == 0
+  error(404, "Strategy info not found") if strategy_cid.nil? || strategy_options.nil?
   resp = Hash.new()
   resp[:name] = strategy_name
   resp[:cid] = strategy_cid
@@ -89,13 +89,12 @@ get '/decision' do
   error(400, "Bad Request") unless params[:cid] && params[:pid]
   my_strategies = []
   strategies = $redis.lrange("cids:#{params[:cid]}:strategies", 0, -1)
-  error(204, "No content") if strategies.nil?
   strategies.each do |s|
     my_strategies.push(s)
   end
   key_prefix = "strategies:#{my_strategies[0]}"
   num_options = $redis.get("#{key_prefix}:numoptions")
-  error(204, "No content") if num_options.nil?
+  error(404, "No such container") if num_options.nil?
   choice = rand(num_options.to_i)
   option_key_prefix = "#{key_prefix}:option:#{choice}"
   chosen_item = Hash.new()
